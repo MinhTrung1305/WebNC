@@ -1,0 +1,66 @@
+BlogController
+//GET: Blogs/Search/5
+public ActionResult Search(string searchString)
+{
+    var blogs = from b in db.Blogs
+                select b;
+
+    if (!String.IsNullOrEmpty(searchString))
+    {
+        blogs = blogs.Where(s => s.Name.Contains(searchString));
+    }
+
+    return View(blogs);
+}
+
+//GET: Blogs/Sort/5
+public ActionResult Sort(string sortOrder)
+{
+    ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+    var blogs = from b in db.Blogs
+                select b;
+    switch (sortOrder)
+    {
+        case "name_desc":
+            blogs = blogs.OrderByDescending(b => b.Name);
+            break;
+        default:
+            blogs = blogs.OrderBy(b => b.Name);
+            break;
+    }
+    return View(blogs.ToList());
+}
+
+PostController
+//GET: Post/Sort/5
+public ActionResult Sort(string sortOrder)
+{
+    ViewBag.NameSortParm = String.IsNullOrEmpty(sortOrder) ? "name_desc" : "";
+    var post = from b in db.Posts
+                select b;
+    switch (sortOrder)
+    {
+        case "name_desc":
+            post = post.OrderByDescending(b => b.Blog.Name);
+            break;
+        default:
+            post = post.OrderBy(b => b.Blog.Name);
+            break;  
+    }
+    return View(post.ToList());
+}
+
+Search
+copy index qua
+@using (Html.BeginForm())
+{
+    <p>
+        Title: @Html.TextBox("SearchString") <input type="submit" value="Tìm kiếm" />
+    </p>
+}
+
+sort
+copy index qua
+<th>
+    @Html.ActionLink("Sort", "Index", new { sortOrder = ViewBag.NameSortParm })
+</th>
